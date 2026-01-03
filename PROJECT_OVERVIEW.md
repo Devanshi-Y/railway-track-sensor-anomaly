@@ -1,197 +1,159 @@
 # Hack4Delhi – Railway Track Tampering Detection System
+# RTAM — Railway Track Anomaly Monitor
+
+RTAM is a multi-modal AI-based monitoring system designed to detect **intentional railway track tampering** using sensor intelligence, camera intelligence, and backend fusion logic.
+
+---
 
 ## 1. Problem Statement
 
-Intentional railway track tampering (cutting rails, loosening bolts, hammering) poses a severe risk to public safety and infrastructure.  
-Existing systems rely heavily on manual inspection or single-modality monitoring, which can fail under low visibility, weather conditions, or delayed response times.
+Intentional railway track tampering—such as rail cutting, bolt loosening, or mechanical interference—poses a severe risk to public safety and railway infrastructure.
 
-The challenge is to design a **technology-driven, real-time, and reliable system** that can detect tampering attempts early and support proactive intervention.
+Existing monitoring approaches rely on:
+- Manual inspection
+- Single-modality sensing
+- Post-incident detection
+
+These methods are insufficient for **early detection**, especially during night-time, adverse weather, or low-visibility conditions.
 
 ---
 
 ## 2. Chosen Domain
 
 **Artificial Intelligence (Cross-Sector)**  
-Problem Statement:  
+Hack4Delhi Problem Statement:  
 **AI system to detect intentional Railway Track Tampering**
 
 ---
 
-## 3. Proposed Solution (High-Level)
+## 3. Proposed Solution
 
-We propose a **multi-modal AI-based monitoring system** that combines:
+RTAM proposes a **multi-modal AI system** that integrates:
 
-- **Sensor-based vibration anomaly detection**
-- **Camera-based visual tampering detection**
-- **Fusion logic** to generate high-confidence alerts
+- Vibration sensors for continuous mechanical monitoring
+- CCTV cameras for visual inspection of track conditions
+- Machine learning models for automated analysis
+- Backend fusion logic for reliable risk assessment
 
-This ensures robustness even if one modality fails.
-
----
-
-## 4. System Architecture (Conceptual)
-
-```
-+---------------------+        +---------------------+
-|  Vibration Sensors  |        |    CCTV Cameras     |
-+----------+----------+        +----------+----------+
-           |                              |
-           v                              v
-+---------------------+        +---------------------+
-|  Sensor ML Model    |        |  Camera ML Model   |
-| (Isolation Forest)  |        | (Object / Action   |
-|                     |        |  Detection)        |
-+----------+----------+        +----------+----------+
-           |                              |
-           +-------------+----------------+
-                         |
-                         v
-                +------------------------+
-                |     Fusion Logic       |
-                |  (Rule + Risk Based)   |
-                +-----------+------------+
-                            |
-                            v
-                +------------------------+
-                | Risk Scoring & Alerts  |
-                +-----------+------------+
-                            |
-                            v
-                +------------------------+
-                | Control Room Dashboard |
-                +-----------+------------+
-                            |
-                            v
-                +------------------------+
-                |  Field Response Team   |
-                +------------------------+
-```
+By combining multiple intelligence sources, RTAM reduces false positives and improves detection reliability.
 
 ---
 
-## 5. Sensor-Based ML Module (My Contribution)
+## 4. System Architecture
 
-### Objective
-Detect abnormal mechanical disturbances in railway tracks using vibration sensor data.
-
-### Data Representation
-- Each data row represents a fixed-length vibration window
-- Columns: `vibration_0` → `vibration_485`
-- Metadata columns are excluded
-
-### Feature Engineering
-From each vibration window, we extract:
-- Mean
-- Standard Deviation
-- Peak-to-Peak Amplitude
-- RMS Energy
-- Kurtosis
-- Skewness
-
-These features capture both energy changes and statistical shape variations caused by tampering.
-
-### Model Used
-- **Isolation Forest (Unsupervised Anomaly Detection)**
-
-**Why Isolation Forest?**
-- No labeled tampering data exists
-- Learns normal behavior and flags deviations
-- Computationally efficient and scalable
-
-### Output
-- Continuous anomaly score per vibration window
-- Higher score indicates higher likelihood of tampering
-
----
-
-## 6. Camera-Based ML Module (Teammate Contribution)
-
-### Objective
-Visually detect tampering activities near railway tracks.
-
-### Core Capabilities
-- Detect humans, tools, and vehicles near tracks
-- Identify suspicious actions (hammering, bending near rails)
-- Distinguish authorized maintenance workers using safety gear cues
-
-### Model (Conceptual)
-- Object detection (e.g., YOLO-based)
-- Action/context analysis
-
-### Output
-- Visual risk score
-- Detected entities and activity labels
++---------------------+ +---------------------+
+| Vibration Sensors | | CCTV Cameras |
++----------+----------+ +----------+----------+
+| |
+| |
+v v
++---------------------+ +---------------------+
+| Sensor ML Model | | Camera ML Model |
+| (Isolation Forest) | | (Deep Learning) |
++----------+----------+ +----------+----------+
+| |
+| |
++-------------+----------------+
+|
+v
++------------------------+
+| Fusion Logic |
+| (Rule-Based Backend) |
++-----------+------------+
+|
+|
+v
++------------------------+
+| Risk Scoring & Alerts |
++-----------+------------+
+|
+|
+v
++------------------------+
+| Control Room Dashboard |
++-----------+------------+
+|
+|
+v
++------------------------+
+| Field Response Team |
++------------------------+
 
 ---
 
-## 7. Fusion Logic (Critical Component)
+## 5. Machine Learning Layer (Overview)
 
-The fusion layer combines **sensor and camera intelligence** to reduce false positives and increase confidence.
+RTAM employs two complementary machine learning components:
 
-### Example Fusion Rules
+- **Sensor-based ML** to detect abnormal vibration patterns indicating mechanical interference
+- **Camera-based ML** to visually identify defects or suspicious activities on railway tracks
 
-| Sensor ML | Camera ML | Interpretation | Risk Level |
-|---------|-----------|---------------|-----------|
-High anomaly | Human + tool detected | Likely tampering | High |
-High anomaly | No person detected | Track defect | Medium |
-Low anomaly | Human detected | Monitoring | Low |
-Anomaly + safety vest | Maintenance window | Authorized work | Low |
+These models operate independently and provide inputs to the backend fusion layer.
 
-Fusion logic ensures explainable, rule-based decisions instead of black-box behavior.
+Detailed ML design and implementation are documented in the repository README.
 
 ---
 
-## 8. End-to-End Workflow
+## 6. Fusion Logic
 
-1. Sensors and cameras continuously monitor railway tracks
-2. Sensor ML detects abnormal vibration patterns
-3. Camera ML detects visual tampering indicators
-4. Fusion logic combines both signals
-5. High-risk events trigger alerts
-6. Alerts are displayed on a control room dashboard
-7. Field teams are dispatched for verification
+RTAM uses a **rule-based fusion layer** implemented in the backend to combine outputs from sensor-based and camera-based ML models.
 
----
+The fusion layer:
+- Correlates physical anomalies with visual evidence
+- Reduces false alarms
+- Produces a final risk classification (Low / Medium / High)
 
-## 9. Technology Stack
-
-### Machine Learning
-- Python
-- Pandas, NumPy
-- SciPy
-- Scikit-learn
-- OpenCV / YOLO (camera module)
-
-### Backend (Conceptual)
-- Python / Flask
-- REST APIs for inference
-- Database for incidents and logs
-
-### Frontend (Conceptual)
-- Web dashboard
-- Real-time alerts and incident timeline
+This approach ensures explainable and auditable decision-making suitable for safety-critical systems.
 
 ---
 
-## 10. Key Advantages of the Proposed System
+## 7. Backend System
 
-- Works in low light and adverse weather
-- Detects early-stage tampering
-- Reduces false alarms through multi-modal fusion
-- Explainable decisions suitable for government deployment
-- Scalable across railway networks
+The backend system is responsible for:
+- Receiving ML outputs
+- Executing fusion logic
+- Managing alerts and event logs
+- Serving processed data to the frontend dashboard
+
+The backend is designed as modular, scalable services using REST APIs.
+
+---
+
+## 8. Frontend Dashboard
+
+The frontend provides a control-room interface that displays:
+- Real-time alerts
+- Risk levels
+- Sensor anomaly trends
+- Visual evidence from camera feeds
+
+This enables authorities to make quick, informed decisions.
+
+---
+
+## 9. End-to-End Workflow
+
+1. Sensors and cameras monitor railway tracks continuously
+2. Sensor ML analyzes vibration data
+3. Camera ML analyzes track images
+4. Backend fusion logic combines ML outputs
+5. Risk-based alerts are generated
+6. Control room reviews alerts and evidence
+7. Field teams are dispatched if required
+
+---
+
+## 10. Technology Stack (High-Level)
+
+- **Machine Learning:** Python, Scikit-learn, PyTorch
+- **Backend:** Python, REST APIs
+- **Frontend:** Web-based dashboard
+- **Deployment:** Modular and scalable architecture
 
 ---
 
 ## 11. Conclusion
 
-This project demonstrates how **AI-driven sensor and vision intelligence** can be combined to create a robust, real-world solution for railway safety.
+RTAM demonstrates how **multi-modal AI systems** can significantly enhance railway safety by enabling early detection, visual confirmation, and explainable decision-making.
 
-By leveraging unsupervised learning, simulation-based validation, and fusion logic, the system ensures reliability even in data-scarce environments.
-
-The solution is designed to support government authorities with actionable, trustworthy alerts.
-
-
-
-
-
+The system is designed for real-world deployment and integration with existing railway infrastructure.
