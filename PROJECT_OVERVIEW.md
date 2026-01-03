@@ -41,43 +41,24 @@ By combining multiple intelligence sources, RTAM reduces false positives and imp
 
 ## 4. System Architecture
 
-+---------------------+ +---------------------+
-| Vibration Sensors | | CCTV Cameras |
-+----------+----------+ +----------+----------+
-| |
-| |
-v v
-+---------------------+ +---------------------+
-| Sensor ML Model | | Camera ML Model |
-| (Isolation Forest) | | (Deep Learning) |
-+----------+----------+ +----------+----------+
-| |
-| |
-+-------------+----------------+
-|
-v
-+------------------------+
-| Fusion Logic |
-| (Rule-Based Backend) |
-+-----------+------------+
-|
-|
-v
-+------------------------+
-| Risk Scoring & Alerts |
-+-----------+------------+
-|
-|
-v
-+------------------------+
-| Control Room Dashboard |
-+-----------+------------+
-|
-|
-v
-+------------------------+
-| Field Response Team |
-+------------------------+
+```mermaid
+flowchart TB
+
+VS[Vibration Sensors]
+CC[CCTV Cameras]
+
+VS --> SM[Sensor ML Model - Isolation Forest]
+CC --> CM[Camera ML Model - Deep Learning]
+
+SM --> FL[Fusion Logic - Rule Based Backend]
+CM --> FL
+
+FL --> RS[Risk Scoring and Alerts]
+
+RS --> CR[Control Room Dashboard]
+RS --> FR[Field Response Team]
+```
+
 
 ---
 
