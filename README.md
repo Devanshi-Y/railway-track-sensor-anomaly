@@ -20,7 +20,7 @@ Frontend and backend services are **outside the scope** of this repository and a
 
 ## ML Modules in This Repository
 
-### 1️⃣ Sensor-Based ML (`sensor_ml/`)
+### 1. Sensor-Based ML (`sensor_ml/`)
 
 **Role:**  
 Provides **continuous, physics-based early detection** of abnormal track behavior using vibration sensor data.
@@ -32,7 +32,7 @@ Provides **continuous, physics-based early detection** of abnormal track behavio
 
 ---
 
-### 2️⃣ Camera-Based ML (`camera_ml/`)
+### 2. Camera-Based ML (`camera_ml/`)
 
 **Role:**  
 Provides **visual confirmation and explainability** by analyzing CCTV images of railway tracks.
